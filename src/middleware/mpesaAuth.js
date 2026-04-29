@@ -1,4 +1,6 @@
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const BASE_URL =
   process.env.MPESA_ENV === "sandbox"
@@ -17,19 +19,24 @@ export async function getAccessToken() {
 
   const credentials = Buffer.from(
     `${process.env.CONSUMER_KEY}:${process.env.CONSUMER_SECRET}`
-  ).toString("base64");
+  )
+    .toString("base64")
+    .trim();
 
-  const response = await axios.get(
-    `${BASE_URL}/oauth/v1/generate?grant_type=client_credentials`,
-    {
-      headers: {
-        Authorization: `Basic ${credentials}`,
-      },
-    }
-  );
+  const url = `${BASE_URL}/oauth/v1/generate`;
+  
+  const response = await axios.get(url, {
+    params: {
+      grant_type: "client_credentials",
+    },
+    headers: {
+      Authorization: `Basic ${credentials}`,
+      "Content-Type": "application/json",
+    },
+  });
 
   cachedToken = response.data.access_token;
-  tokenExpiry = now + 3500 * 1000; // refresh early
+  tokenExpiry = now + 3500 * 1000;
 
   return cachedToken;
 }
