@@ -11,10 +11,10 @@ const app = express();
 app.use(express.json());
 console.log("INDEX ENV:", process.env.MPESA_ENV);
 
-app.use("/api/mpesa/auth", authRoutes);
-// app.use("/api/mpesa/stk", stkRoutes);
-// app.use("/api/mpesa/c2b", c2bRoutes);
-// app.use("/api/mpesa/query", queryRoutes);
+app.use("/api/payments/auth", authRoutes);
+app.use("/api/payments/stk", stkRoutes);
+app.use("/api/payments/c2b", c2bRoutes);
+app.use("/api/payments/query", queryRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`M-Pesa integration running on port ${process.env.PORT}`);
