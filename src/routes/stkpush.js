@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   initiateStkPush,
   handleStkCallback,
-} from "../controllers/stkController";
+} from "../controllers/stkController.js";
 
 const router = Router();
 router.post("/push", initiateStkPush);

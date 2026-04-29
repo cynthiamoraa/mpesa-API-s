@@ -1,7 +1,9 @@
-const express = require("express");
+import express from "express";
+import { queryStkStatus } from "../controllers/queryController.js";
+
 const router = express.Router();
-const { queryStkStatus } = require("../controllers/queryController");
+
 
 router.post("/status", queryStkStatus);
 
-module.exports = router;
+export default router;

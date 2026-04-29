@@ -1,13 +1,13 @@
-const axios = require("axios");
-const { getAccessToken, BASE_URL } = require("../middleware/mpesaAuth");
+import axios from "axios";
+import { getAccessToken, BASE_URL } from "../middleware/mpesaAuth.js";
 
-async function registerUrls(req, res) {
+export async function registerUrls(req, res) {
   try {
     const token = await getAccessToken();
 
     const payload = {
       ShortCode: process.env.BUSINESS_SHORT_CODE,
-      ResponseType: "Completed", // or 'Cancelled' — what happens if validation URL unreachable
+      ResponseType: "Completed",
       ConfirmationURL: process.env.CONFIRMATION_URL,
       ValidationURL: process.env.VALIDATION_URL,
     };
@@ -32,7 +32,7 @@ async function registerUrls(req, res) {
   }
 }
 
-async function handleValidation(req, res) {
+export async function handleValidation(req, res) {
   const { TransID, MSISDN, TransAmount, BillRefNumber } = req.body;
 
   console.log("Validation request:", {
@@ -42,18 +42,17 @@ async function handleValidation(req, res) {
     BillRefNumber,
   });
 
-  // Add your validation logic here
-  // e.g. check if BillRefNumber is a valid account in your DB
-  const isValid = true; // replace with real logic
+  // 🔍 Replace with real validation logic
+  const isValid = true;
 
   if (isValid) {
-    res.json({ ResultCode: "0", ResultDesc: "Accepted" });
+    return res.json({ ResultCode: "0", ResultDesc: "Accepted" });
   } else {
-    res.json({ ResultCode: "C2B00012", ResultDesc: "Rejected" });
+    return res.json({ ResultCode: "C2B00012", ResultDesc: "Rejected" });
   }
 }
 
-async function handleConfirmation(req, res) {
+export async function handleConfirmation(req, res) {
   const {
     TransID,
     TransAmount,
@@ -71,11 +70,8 @@ async function handleConfirmation(req, res) {
     time: TransTime,
   });
 
-  // TODO: Save to your database here
-  // await Payment.create({ transactionId: TransID, amount: TransAmount, ... });
+  // 🧠 This is where your real power is:
+  // Save to DB, trigger business logic, etc.
 
-  // Always respond with success — M-Pesa does not retry if you return an error
   res.json({ ResultCode: 0, ResultDesc: "Success" });
 }
-
-module.exports = { registerUrls, handleValidation, handleConfirmation };

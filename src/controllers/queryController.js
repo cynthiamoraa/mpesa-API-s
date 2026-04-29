@@ -1,5 +1,5 @@
-const axios = require("axios");
-const { getAccessToken, BASE_URL } = require("../middleware/mpesaAuth");
+import axios from "axios";
+import { getAccessToken, BASE_URL } from "../middleware/mpesaAuth.js";
 
 function generateTimestamp() {
   const now = new Date();
@@ -20,7 +20,7 @@ function generatePassword(timestamp) {
   return Buffer.from(`${shortCode}${passkey}${timestamp}`).toString("base64");
 }
 
-async function queryStkStatus(req, res) {
+export async function queryStkStatus(req, res) {
   try {
     const { checkoutRequestId } = req.body;
 
@@ -52,13 +52,11 @@ async function queryStkStatus(req, res) {
 
     const result = response.data;
 
-    // ResultCode 0 = success, 1032 = cancelled by user, others = failure
+    // Normalize status (API sometimes returns numbers, sometimes strings)
+    const code = String(result.ResultCode);
+
     const status =
-      result.ResultCode === "0"
-        ? "paid"
-        : result.ResultCode === "1032"
-        ? "cancelled"
-        : "failed";
+      code === "0" ? "paid" : code === "1032" ? "cancelled" : "failed";
 
     res.json({
       success: true,
@@ -75,5 +73,3 @@ async function queryStkStatus(req, res) {
     });
   }
 }
-
-module.exports = { queryStkStatus };

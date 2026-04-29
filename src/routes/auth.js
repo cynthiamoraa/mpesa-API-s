@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const { getAccessToken } = require("../middleware/mpesaAuth");
+import { Router } from "express";
+const router = Router();
+import { getAccessToken } from "../middleware/mpesaAuth.js";
 
 router.get("/token", async (req, res) => {
   try {
@@ -14,4 +14,4 @@ router.get("/token", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,13 +1,15 @@
-require("dotenv").config();
-import express, { json } from "express";
+import dotenv from "dotenv";
+import express from "express";
+import authRoutes from "./src/routes/auth.js";
+import stkRoutes from "./src/routes/stkpush.js";
+import c2bRoutes from "./src/routes/c2b.js";
+import queryRoutes from "./src/routes/query.js";
+
+dotenv.config();
+
 const app = express();
 
-app.use(json());
-
-import authRoutes from "./src/routes/auth";
-import stkRoutes from "./src/routes/stkpush";
-import c2bRoutes from "./src/routes/c2b";
-import queryRoutes from "./src/routes/query";
+app.use(express.json());
 
 app.use("/api/mpesa/auth", authRoutes);
 app.use("/api/mpesa/stk", stkRoutes);

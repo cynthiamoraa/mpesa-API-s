@@ -1,13 +1,14 @@
-const express = require("express");
-const router = express.Router();
-const {
+import express from "express";
+import {
   registerUrls,
   handleValidation,
   handleConfirmation,
-} = require("../controllers/c2bController");
+} from "../controllers/c2bController.js";
+
+const router = express.Router();
 
 router.post("/register", registerUrls);
 router.post("/validate", handleValidation);
 router.post("/confirm", handleConfirmation);
 
-module.exports = router;
+export default router;

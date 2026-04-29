@@ -1,6 +1,6 @@
-const axios = require("axios");
+import axios from "axios";
 
-const BASE_URL =
+export const BASE_URL =
   process.env.MPESA_ENV === "sandbox"
     ? "https://sandbox.safaricom.co.ke"
     : "https://api.safaricom.co.ke";
@@ -8,7 +8,7 @@ const BASE_URL =
 let cachedToken = null;
 let tokenExpiry = null;
 
-async function getAccessToken() {
+export async function getAccessToken() {
   const now = Date.now();
 
   if (cachedToken && tokenExpiry && now < tokenExpiry) {
@@ -29,8 +29,7 @@ async function getAccessToken() {
   );
 
   cachedToken = response.data.access_token;
-  tokenExpiry = now + 3500 * 1000; // refresh 100 seconds early
+  tokenExpiry = now + 3500 * 1000; // refresh early
+
   return cachedToken;
 }
-
-module.exports = { getAccessToken, BASE_URL };

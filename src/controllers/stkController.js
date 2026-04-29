@@ -1,5 +1,5 @@
-const axios = require("axios");
-const { getAccessToken, BASE_URL } = require("../middleware/mpesaAuth");
+import axios from "axios";
+import { getAccessToken, BASE_URL } from "../middleware/mpesaAuth.js";
 
 function generateTimestamp() {
   const now = new Date();
@@ -21,7 +21,7 @@ function generatePassword(timestamp) {
   return Buffer.from(raw).toString("base64");
 }
 
-async function initiateStkPush(req, res) {
+export async function initiateStkPush(req, res) {
   try {
     const { phone, amount, accountRef, description } = req.body;
 
@@ -39,8 +39,8 @@ async function initiateStkPush(req, res) {
       Password: password,
       Timestamp: timestamp,
       TransactionType: "CustomerPayBillOnline",
-      Amount: Math.round(amount), // whole numbers only
-      PartyA: phone, // e.g. 254712345678
+      Amount: Math.round(amount),
+      PartyA: phone,
       PartyB: shortCode,
       PhoneNumber: phone,
       CallBackURL: process.env.CALLBACK_URL,
@@ -73,9 +73,7 @@ async function initiateStkPush(req, res) {
   }
 }
 
-module.exports = { initiateStkPush };
-
-async function handleStkCallback(req, res) {
+export async function handleStkCallback(req, res) {
   const callbackData = req.body?.Body?.stkCallback;
 
   if (!callbackData) {
@@ -97,7 +95,6 @@ async function handleStkCallback(req, res) {
   });
 
   if (ResultCode === 0) {
-    // Payment SUCCESS — extract details
     const items = CallbackMetadata?.Item || [];
     const get = (name) => items.find((i) => i.Name === name)?.Value;
 
@@ -111,16 +108,10 @@ async function handleStkCallback(req, res) {
 
     console.log("Payment successful:", paymentData);
 
-    // TODO: Update your database here
-    // await Order.update({ status: 'paid', ...paymentData }, { where: { checkoutRequestId: CheckoutRequestID } });
+    // TODO: Save/update DB
   } else {
-    // Payment FAILED or cancelled
     console.log(`Payment failed: ${ResultDesc} (code: ${ResultCode})`);
-    // TODO: Update order status to 'failed' or 'cancelled'
   }
 
-  // Always return 200 — M-Pesa does not retry on error responses
   res.json({ ResultCode: 0, ResultDesc: "Success" });
 }
-
-module.exports = { initiateStkPush, handleStkCallback };
